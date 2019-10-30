@@ -8,7 +8,10 @@ namespace ApiTaqueria.Persistence.Entities
         public Inventario()
         {
             Compras = new HashSet<Compras>();
+            Detallecompra = new HashSet<Detallecompra>();
+            Ingredientes = new HashSet<Ingredientes>();
             Mermas = new HashSet<Mermas>();
+            ProductosProveedores = new HashSet<ProductosProveedores>();
             Tacos = new HashSet<Tacos>();
         }
 
@@ -22,7 +25,10 @@ namespace ApiTaqueria.Persistence.Entities
 
         public virtual Proveedores IdProveedorNavigation { get; set; }
         public virtual ICollection<Compras> Compras { get; set; }
+        public virtual ICollection<Detallecompra> Detallecompra { get; set; }
+        public virtual ICollection<Ingredientes> Ingredientes { get; set; }
         public virtual ICollection<Mermas> Mermas { get; set; }
+        public virtual ICollection<ProductosProveedores> ProductosProveedores { get; set; }
         public virtual ICollection<Tacos> Tacos { get; set; }
     }
 }

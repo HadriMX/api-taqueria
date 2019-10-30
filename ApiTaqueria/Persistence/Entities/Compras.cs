@@ -13,5 +13,6 @@ namespace ApiTaqueria.Persistence.Entities
 
         public virtual Inventario NombreProductoNavigation { get; set; }
         public virtual Proveedores ProveedorNavigation { get; set; }
+        public virtual Detallecompra Detallecompra { get; set; }
     }
 }

@@ -5,6 +5,11 @@ namespace ApiTaqueria.Persistence.Entities
 {
     public partial class Ordenes
     {
+        public Ordenes()
+        {
+            DetalleOrden = new HashSet<DetalleOrden>();
+        }
+
         public int IdOrden { get; set; }
         public string TipoPedido { get; set; }
         public int IdEmpleado { get; set; }
@@ -12,5 +17,6 @@ namespace ApiTaqueria.Persistence.Entities
         public decimal Total { get; set; }
 
         public virtual Empleados IdEmpleadoNavigation { get; set; }
+        public virtual ICollection<DetalleOrden> DetalleOrden { get; set; }
     }
 }

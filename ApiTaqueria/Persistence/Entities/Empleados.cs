@@ -7,6 +7,7 @@ namespace ApiTaqueria.Persistence.Entities
     {
         public Empleados()
         {
+            Asistencias = new HashSet<Asistencias>();
             Ordenes = new HashSet<Ordenes>();
         }
 
@@ -19,6 +20,7 @@ namespace ApiTaqueria.Persistence.Entities
         public decimal Salario { get; set; }
         public string Estatus { get; set; }
 
+        public virtual ICollection<Asistencias> Asistencias { get; set; }
         public virtual ICollection<Ordenes> Ordenes { get; set; }
     }
 }

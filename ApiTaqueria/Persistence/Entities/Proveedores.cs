@@ -9,6 +9,7 @@ namespace ApiTaqueria.Persistence.Entities
         {
             Compras = new HashSet<Compras>();
             Inventario = new HashSet<Inventario>();
+            ProductosProveedores = new HashSet<ProductosProveedores>();
         }
 
         public int IdProveedor { get; set; }
@@ -20,5 +21,6 @@ namespace ApiTaqueria.Persistence.Entities
 
         public virtual ICollection<Compras> Compras { get; set; }
         public virtual ICollection<Inventario> Inventario { get; set; }
+        public virtual ICollection<ProductosProveedores> ProductosProveedores { get; set; }
     }
 }
