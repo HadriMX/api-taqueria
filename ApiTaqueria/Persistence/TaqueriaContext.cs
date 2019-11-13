@@ -1,9 +1,10 @@
 ﻿using ApiTaqueria.Persistence.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiTaqueria.Persistence
 {
-    public partial class TaqueriaContext : DbContext
+    public partial class TaqueriaContext : IdentityDbContext
     {
         public TaqueriaContext(DbContextOptions<TaqueriaContext> options)
             : base(options)
@@ -26,6 +27,8 @@ namespace ApiTaqueria.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
             modelBuilder.Entity<Asistencias>(entity =>
