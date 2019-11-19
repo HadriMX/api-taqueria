@@ -1,35 +1,41 @@
 ﻿using ApiTaqueria.Persistence.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiTaqueria.Persistence
 {
-    public partial class TaqueriaContext : IdentityDbContext
+    public partial class TaqueriaContext : DbContext
     {
+        public TaqueriaContext()
+        {
+        }
+
         public TaqueriaContext(DbContextOptions<TaqueriaContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<Asistencias> Asistencias { get; set; }
+        public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
+        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Compras> Compras { get; set; }
         public virtual DbSet<DetalleOrden> DetalleOrden { get; set; }
         public virtual DbSet<Detallecompra> Detallecompra { get; set; }
         public virtual DbSet<Empleados> Empleados { get; set; }
-        public virtual DbSet<Ingredientes> Ingredientes { get; set; }
         public virtual DbSet<Inventario> Inventario { get; set; }
         public virtual DbSet<Mermas> Mermas { get; set; }
         public virtual DbSet<Ordenes> Ordenes { get; set; }
-        public virtual DbSet<Productos> Productos { get; set; }
         public virtual DbSet<ProductosProveedores> ProductosProveedores { get; set; }
         public virtual DbSet<Proveedores> Proveedores { get; set; }
         public virtual DbSet<Tacos> Tacos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity<Asistencias>(entity =>
             {
@@ -52,6 +58,85 @@ namespace ApiTaqueria.Persistence
                     .HasForeignKey(d => d.IdEmpleado)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_asistencias_empleados");
+            });
+
+            modelBuilder.Entity<AspNetRoleClaims>(entity =>
+            {
+                entity.Property(e => e.RoleId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetRoleClaims)
+                    .HasForeignKey(d => d.RoleId);
+            });
+
+            modelBuilder.Entity<AspNetRoles>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<AspNetUserClaims>(entity =>
+            {
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserClaims)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserLogins>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserLogins)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserRoles>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.RoleId);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserTokens>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserTokens)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUsers>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Email).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
             });
 
             modelBuilder.Entity<Compras>(entity =>
@@ -187,37 +272,6 @@ namespace ApiTaqueria.Persistence
                     .HasMaxLength(10);
             });
 
-            modelBuilder.Entity<Ingredientes>(entity =>
-            {
-                entity.HasKey(e => e.IdIngrendiente);
-
-                entity.ToTable("ingredientes");
-
-                entity.Property(e => e.IdIngrendiente)
-                    .HasColumnName("ID_ingrendiente")
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
-
-                entity.Property(e => e.IdProducto)
-                    .HasColumnName("Id_producto")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.MateriaPrima).HasColumnName("materia_prima");
-
-                entity.HasOne(d => d.IdProductoNavigation)
-                    .WithMany(p => p.Ingredientes)
-                    .HasForeignKey(d => d.IdProducto)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ingredientes_productos");
-
-                entity.HasOne(d => d.MateriaPrimaNavigation)
-                    .WithMany(p => p.Ingredientes)
-                    .HasForeignKey(d => d.MateriaPrima)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ingredientes_inventario");
-            });
-
             modelBuilder.Entity<Inventario>(entity =>
             {
                 entity.HasKey(e => e.IdInventario)
@@ -239,6 +293,8 @@ namespace ApiTaqueria.Persistence
                     .HasColumnName("Nombre_producto")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Precio).HasColumnType("money");
 
                 entity.Property(e => e.TipoProducto)
                     .IsRequired()
@@ -317,26 +373,6 @@ namespace ApiTaqueria.Persistence
                     .HasConstraintName("FK_ordenes_empleados");
             });
 
-            modelBuilder.Entity<Productos>(entity =>
-            {
-                entity.HasKey(e => e.IdProducto)
-                    .HasName("PK_productos_1");
-
-                entity.ToTable("productos");
-
-                entity.Property(e => e.IdProducto).HasColumnName("id_producto");
-
-                entity.Property(e => e.NombreProducto)
-                    .IsRequired()
-                    .HasColumnName("nombre_producto")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Precio)
-                    .HasColumnName("precio")
-                    .HasColumnType("money");
-            });
-
             modelBuilder.Entity<ProductosProveedores>(entity =>
             {
                 entity.HasKey(e => new { e.IdProveedor, e.Producto });
@@ -405,6 +441,11 @@ namespace ApiTaqueria.Persistence
 
                 entity.Property(e => e.IdTacos).HasColumnName("ID_tacos");
 
+                entity.Property(e => e.Ingredientes)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasColumnName("nombre")
@@ -414,12 +455,6 @@ namespace ApiTaqueria.Persistence
                 entity.Property(e => e.Precio)
                     .HasColumnName("precio")
                     .HasColumnType("money");
-
-                entity.HasOne(d => d.IngredientesNavigation)
-                    .WithMany(p => p.Tacos)
-                    .HasForeignKey(d => d.Ingredientes)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_tacos_productos");
             });
         }
     }

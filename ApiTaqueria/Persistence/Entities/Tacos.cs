@@ -11,11 +11,10 @@ namespace ApiTaqueria.Persistence.Entities
         }
 
         public int IdTacos { get; set; }
-        public int Ingredientes { get; set; }
+        public string Ingredientes { get; set; }
         public string Nombre { get; set; }
         public decimal Precio { get; set; }
 
-        public virtual Inventario IngredientesNavigation { get; set; }
         public virtual ICollection<DetalleOrden> DetalleOrden { get; set; }
     }
 }

@@ -1,10 +1,12 @@
-﻿using ApiTaqueria.Persistence;
-using ApiTaqueria.Persistence.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ApiTaqueria.Persistence;
+using ApiTaqueria.Persistence.Entities;
 
 namespace ApiTaqueria.Controllers
 {
@@ -30,7 +32,7 @@ namespace ApiTaqueria.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Inventario>> GetInventario(int id)
         {
-            Inventario inventario = await _context.Inventario.FindAsync(id);
+            var inventario = await _context.Inventario.FindAsync(id);
 
             if (inventario == null)
             {
@@ -84,7 +86,7 @@ namespace ApiTaqueria.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Inventario>> DeleteInventario(int id)
         {
-            Inventario inventario = await _context.Inventario.FindAsync(id);
+            var inventario = await _context.Inventario.FindAsync(id);
             if (inventario == null)
             {
                 return NotFound();
