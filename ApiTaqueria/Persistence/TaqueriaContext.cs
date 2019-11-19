@@ -201,23 +201,23 @@ namespace ApiTaqueria.Persistence
 
             modelBuilder.Entity<Detallecompra>(entity =>
             {
-                entity.HasKey(e => e.IdCompra);
+                entity.HasKey(e => e.IdDetallecompra);
 
                 entity.ToTable("detallecompra");
 
-                entity.Property(e => e.IdCompra)
-                    .HasColumnName("id_compra")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.IdDetallecompra).HasColumnName("id_detallecompra");
 
                 entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+
+                entity.Property(e => e.IdCompra).HasColumnName("id_compra");
 
                 entity.Property(e => e.PrecioUnitario)
                     .HasColumnName("precio_unitario")
                     .HasColumnType("money");
 
                 entity.HasOne(d => d.IdCompraNavigation)
-                    .WithOne(p => p.Detallecompra)
-                    .HasForeignKey<Detallecompra>(d => d.IdCompra)
+                    .WithMany(p => p.Detallecompra)
+                    .HasForeignKey(d => d.IdCompra)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_detallecompra_compras");
 

@@ -5,6 +5,7 @@ namespace ApiTaqueria.Persistence.Entities
 {
     public partial class Detallecompra
     {
+        public int IdDetallecompra { get; set; }
         public int IdCompra { get; set; }
         public int Producto { get; set; }
         public int Cantidad { get; set; }

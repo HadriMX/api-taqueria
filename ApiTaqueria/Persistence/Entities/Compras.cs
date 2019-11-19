@@ -5,6 +5,11 @@ namespace ApiTaqueria.Persistence.Entities
 {
     public partial class Compras
     {
+        public Compras()
+        {
+            Detallecompra = new HashSet<Detallecompra>();
+        }
+
         public int IdCompra { get; set; }
         public int NombreProducto { get; set; }
         public int Proveedor { get; set; }
@@ -13,6 +18,6 @@ namespace ApiTaqueria.Persistence.Entities
 
         public virtual Inventario NombreProductoNavigation { get; set; }
         public virtual Proveedores ProveedorNavigation { get; set; }
-        public virtual Detallecompra Detallecompra { get; set; }
+        public virtual ICollection<Detallecompra> Detallecompra { get; set; }
     }
 }
