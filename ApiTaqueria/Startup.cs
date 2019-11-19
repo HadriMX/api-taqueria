@@ -41,7 +41,7 @@ namespace ApiTaqueria
                opt =>
                {
                    opt.SaveToken = true;
-                   opt.RequireHttpsMetadata = true;
+                   opt.RequireHttpsMetadata = false;
                    opt.TokenValidationParameters = new TokenValidationParameters()
                    {
                        ValidateIssuer = true,
@@ -52,7 +52,10 @@ namespace ApiTaqueria
                    };
                });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .AddJsonOptions(opt =>
+                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.Configure<JWT>(Configuration.GetSection("Jwt"));
         }
@@ -62,6 +65,7 @@ namespace ApiTaqueria
         {
             if (env.IsDevelopment())
             {
+                app.UseCors();
                 app.UseDeveloperExceptionPage();
             }
             else

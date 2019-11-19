@@ -23,7 +23,7 @@ namespace ApiTaqueria.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Asistencias>>> GetAsistencias()
         {
-            return await _context.Asistencias.ToListAsync();
+            return await _context.Asistencias.Include(x => x.IdEmpleadoNavigation).ToListAsync();
         }
 
         // GET: api/Asistencias/5
