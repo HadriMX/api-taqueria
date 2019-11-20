@@ -25,7 +25,7 @@ namespace ApiTaqueria.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Inventario>>> GetInventario()
         {
-            return await _context.Inventario.ToListAsync();
+            return await _context.Inventario.Include(x => x.IdProveedorNavigation).ToListAsync();
         }
 
         // GET: api/Inventarios/5

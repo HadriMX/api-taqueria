@@ -52,6 +52,8 @@ namespace ApiTaqueria
                    };
                });
 
+            services.AddSpaStaticFiles(cfg => cfg.RootPath = "wwwroot");
+
             services.AddMvc()
                 .AddJsonOptions(opt =>
                     opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
@@ -75,7 +77,9 @@ namespace ApiTaqueria
             }
 
             app.UseHttpsRedirection();
+            app.UseSpaStaticFiles();
             app.UseMvc();
+            app.UseSpa(spa => spa.Options.SourcePath = "wwwroot");
         }
     }
 }
