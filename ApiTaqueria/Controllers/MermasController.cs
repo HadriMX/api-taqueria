@@ -23,7 +23,7 @@ namespace ApiTaqueria.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Mermas>>> GetMermas()
         {
-            return await _context.Mermas.ToListAsync();
+            return await _context.Mermas.Include(x => x.IdProductoNavigation).ToListAsync();
         }
 
         // GET: api/Mermas/5
