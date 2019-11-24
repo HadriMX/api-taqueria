@@ -1,8 +1,10 @@
-﻿using ApiTaqueria.Models;
+﻿using ApiTaqueria.Hubs;
+using ApiTaqueria.Models;
 using ApiTaqueria.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +27,7 @@ namespace ApiTaqueria
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors(options =>
-                options.AddDefaultPolicy(cfg => cfg.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+                options.AddDefaultPolicy(cfg => cfg.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
 
             services.AddDbContext<TaqueriaContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -48,7 +50,7 @@ namespace ApiTaqueria
                        ValidateAudience = true,
                        ValidIssuer = Configuration["Jwt:Site"],
                        ValidAudience = Configuration["Jwt:Site"],
-                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SigningKey"]))
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Jwt:SigningKey"].ToLowerInvariant()))
                    };
                });
 
@@ -58,6 +60,9 @@ namespace ApiTaqueria
                 .AddJsonOptions(opt =>
                     opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSignalR()
+                    .AddAzureSignalR();
 
             services.Configure<JWT>(Configuration.GetSection("Jwt"));
         }
@@ -78,6 +83,12 @@ namespace ApiTaqueria
 
             app.UseHttpsRedirection();
             app.UseSpaStaticFiles();
+
+            app.UseAzureSignalR(routes =>
+            {
+                routes.MapHub<Chat>("/chat");
+            });
+
             app.UseMvc();
             app.UseSpa(spa => spa.Options.SourcePath = "wwwroot");
         }

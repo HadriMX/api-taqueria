@@ -23,7 +23,10 @@ namespace ApiTaqueria.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ordenes>>> GetOrdenes()
         {
-            return await _context.Ordenes.Include(x => x.DetalleOrden).ToListAsync();
+            return await _context.Ordenes
+                .Include(x => x.DetalleOrden).ThenInclude(x => x.IdTacoNavigation)
+                .Where(x => x.Estatus == "A")
+                .ToListAsync();
         }
 
         // GET: api/Ordenes/5

@@ -1,10 +1,11 @@
 ﻿using ApiTaqueria.Models;
-using ApiTaqueria.Persistence;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ApiTaqueria.Controllers
 {
@@ -12,37 +13,71 @@ namespace ApiTaqueria.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly TaqueriaContext _context;
         private readonly JWT _jwt;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthenticationController(TaqueriaContext context, IOptions<JWT> jwtSettings, UserManager<IdentityUser> userManager)
+        public AuthenticationController(IOptions<JWT> jwtSettings)
         {
-            _context = context;
             _jwt = jwtSettings.Value;
-            _userManager = userManager;
         }
 
-        // POST api/register
-        [HttpPost("register")]
-        public async Task<IActionResult> Insert(Usuario dto)
+        // POST api/login
+        [HttpPost("login")]
+        public IActionResult Login(Usuario dto)
         {
-            var user = new IdentityUser
-            {
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = dto.Username
-            };
+            var loggedIn = ChecharUsuarios(dto.Username, dto.Pwd);
 
-            IdentityResult result = await _userManager.CreateAsync(user, dto.Pwd).ConfigureAwait(false);
-
-            if (result.Succeeded)
+            if (loggedIn)
             {
-                return Ok();
+                UserToken userToken = CreateUserToken(dto.Username);
+                return Ok(userToken);
             }
             else
             {
-                return BadRequest(result.Errors);
+                return Unauthorized();
             }
+        }
+
+        private bool ChecharUsuarios(string username, string pwd)
+        {
+            if (username == "admin" && pwd == "admin")
+                return true;
+            else if (username == "mesero1" && pwd == "qwerty")
+                return true;
+            else if (username == "mesero2" && pwd == "ytrewq")
+                return true;
+            else
+                return false;
+        }
+
+        private UserToken CreateUserToken(string username)
+        {
+            JwtSecurityToken jwtToken = CreateJwtToken(username);
+
+            return new UserToken
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
+                Expiration = jwtToken.ValidTo
+            };
+        }
+
+        private JwtSecurityToken CreateJwtToken(string username)
+        {
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwt.SigningKey.ToLowerInvariant()));
+            DateTime expireDateTime = DateTime.UtcNow.AddMinutes(_jwt.ExpiresInMinutes);
+
+            Claim[] claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString("o"), ClaimValueTypes.DateTime)
+            };
+
+            return new JwtSecurityToken(
+                issuer: _jwt.Site,
+                audience: _jwt.Site,
+                expires: expireDateTime,
+                claims: claims,
+                signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+            );
         }
     }
 }

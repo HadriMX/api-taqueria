@@ -352,6 +352,13 @@ namespace ApiTaqueria.Persistence
 
                 entity.Property(e => e.IdOrden).HasColumnName("ID_orden");
 
+                entity.Property(e => e.Estatus)
+                    .IsRequired()
+                    .HasColumnName("estatus")
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("('A')");
+
                 entity.Property(e => e.Fecha).HasColumnType("date");
 
                 entity.Property(e => e.IdEmpleado).HasColumnName("ID_empleado");
