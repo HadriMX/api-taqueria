@@ -16,6 +16,7 @@ namespace ApiTaqueria.Persistence.Entities
         public DateTime Fecha { get; set; }
         public decimal Total { get; set; }
         public string Estatus { get; set; }
+        public int? NumMesa { get; set; }
 
         public virtual Empleados IdEmpleadoNavigation { get; set; }
         public virtual ICollection<DetalleOrden> DetalleOrden { get; set; }

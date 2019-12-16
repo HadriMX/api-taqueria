@@ -172,15 +172,19 @@ namespace ApiTaqueria.Persistence
 
             modelBuilder.Entity<DetalleOrden>(entity =>
             {
-                entity.HasKey(e => new { e.IdOrden, e.IdTaco });
+                entity.HasKey(e => e.Id);
 
                 entity.ToTable("detalle_orden");
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.IdOrden).HasColumnName("id_orden");
 
                 entity.Property(e => e.IdTaco).HasColumnName("id_taco");
 
                 entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+
+                entity.Property(e => e.Nota).HasColumnName("nota");
 
                 entity.Property(e => e.PrecioUnitario)
                     .HasColumnName("precio_unitario")
@@ -378,6 +382,8 @@ namespace ApiTaqueria.Persistence
                     .HasForeignKey(d => d.IdEmpleado)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ordenes_empleados");
+
+                entity.Property(e => e.NumMesa).HasColumnName("num_mesa");
             });
 
             modelBuilder.Entity<ProductosProveedores>(entity =>

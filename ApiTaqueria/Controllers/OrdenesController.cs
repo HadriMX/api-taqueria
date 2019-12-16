@@ -33,7 +33,9 @@ namespace ApiTaqueria.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Ordenes>> GetOrdenes(int id)
         {
-            Ordenes ordenes = await _context.Ordenes.FindAsync(id);
+            Ordenes ordenes = await _context.Ordenes
+                .Include(x => x.DetalleOrden).ThenInclude(x => x.IdTacoNavigation)
+                .SingleOrDefaultAsync(x => x.IdOrden == id);
 
             if (ordenes == null)
             {
